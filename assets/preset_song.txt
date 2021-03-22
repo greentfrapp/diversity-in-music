@@ -1,0 +1,10 @@
+Given a statement, we generate a real song recommendation that is the opposite, different and diverse.
+
+Input: You have been listening to sad songs lately.
+Output: Try cheering up with this! <SONG>Don't Worry Be Happy by Bobby McFerrin</SONG>
+
+Input: Your recent songs have been pretty slow.
+Output: Here is a faster song! <SONG>Blue Suede Shoes by Elvis Presley</SONG>
+
+Input: {prompt}
+Output:
