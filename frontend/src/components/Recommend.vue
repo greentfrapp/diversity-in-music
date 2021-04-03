@@ -3,7 +3,7 @@
     <div id="main">
     <div id="a" class="ui large form">
       <!-- <h3 class="ui dividing header">Demo</h3> -->
-      <div class="demo">
+      <div id="demoDiv" class="demo">
         <div class="status-bar">
           <span style="color: white;">12:00</span>
           <img src="static/status-bar.svg" style="width: 20%; float: right;" />
@@ -39,9 +39,16 @@
           </div>
         </div>  
       </div>
+      <div id="loading-box">
+        <svg width="90px" height="30px" viewBox="0 0 300 100" :style="{marginLeft: 'auto', marginRight: 'auto', display: loading ? 'block' : 'none'}">
+          <circle cx="150" cy="50" r="15" fill="#23db59" />
+          <circle cx="75" cy="50" r="15" fill="#23db59" />
+          <circle cx="225" cy="50" r="15" fill="#23db59" />
+        </svg>
+      </div>
       <div id="input-box">
         <!-- <iframe :src="embedSrc" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe> -->
-        <input v-model="a" :class="{streaming: streaming}" v-on:keyup.enter="query"></input>
+        <input v-model="a" :disabled="loading" v-on:keyup.enter="query"></input>
       </div>
       
     </div>
@@ -144,9 +151,9 @@ code {
 }
 
 @keyframes stream {
-  0% { opacity: 0.5; }
+  0% { opacity: 0.0; }
   50% { opacity: 1.0; }
-  100% { opacity: 0.5; }
+  100% { opacity: 0.0; }
 }
 
 #output textarea.done {
@@ -225,6 +232,7 @@ code {
   width: 80%;
   margin-left: 20%;
   color: #23db59;
+  text-align: right;
 }
 
 .track-artist, .top-prompt {
@@ -249,6 +257,19 @@ code {
   cursor: pointer;
 }
 
+#loading-box {
+  width: 390px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #222;
+  padding: 0px;
+  height: 30px;
+}
+
+#loading-box svg {
+  animation: stream 2s linear infinite;
+}
+
 #input-box {
   /*border: 5px solid red;*/
   /*height: 100px;*/
@@ -258,6 +279,11 @@ code {
   background: #222;
   padding: 20px;
   /*box-shadow: 2px 2px 5px 2px #888888;*/
+}
+
+input:disabled {
+  opacity: 0.8;
+  color: #999 !important;
 }
 
 </style>
@@ -382,9 +408,9 @@ export default {
             if (!song) song = response.data.tracks.items[0]
             this.albumArt = song.album.images[0].url
             this.artist = song.artists[0].name
-            if (this.artist.length >= 25) this.artist = this.artist.substr(0, 22) + '...'
+            if (this.artist.length >= 22) this.artist = this.artist.substr(0, 18) + '...'
             this.song = song.name
-            if (this.song.length >= 25) this.song = this.song.substr(0, 22) + '...'
+            if (this.song.length >= 22) this.song = this.song.substr(0, 18) + '...'
             this.songUrl = song.external_urls.spotify
             this.embedSrc = 'spotify:track:' + this.songUrl.split('track/')[1] + '?play=true'
             let newTracks = []
@@ -403,6 +429,11 @@ export default {
             this.tracks = newTracks
             this.loading = false
             this.done = true
+
+            setTimeout(function(){
+              const temp = document.getElementById("demoDiv")
+              temp.scrollTop = temp.scrollTopMax
+            }, 100)
           }
         })
       })

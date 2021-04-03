@@ -50,7 +50,6 @@ async def recommend(conversation: Conversation):
         template = file.read()
     with open(f"assets/preset_song.json", 'r') as file:
         config = json.load(file)
-    print(template.format(conversation='\n\n'.join(history)))
     response = andrew.query(
         template.format(conversation='\n\n'.join(history)),
         stop=config['stop'],
