@@ -47,7 +47,6 @@
         </svg>
       </div>
       <div id="input-box">
-        <!-- <iframe :src="embedSrc" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe> -->
         <input v-model="a" :disabled="loading" v-on:keyup.enter="query"></input>
       </div>
       
@@ -59,7 +58,7 @@
 <style>
 html {
   /*overflow: hidden;*/
-  background-image: linear-gradient(red, yellow);
+  /*background-image: linear-gradient(red, yellow);*/
 }
 
 #sidebar {
@@ -100,10 +99,6 @@ code {
     "."
     "a"
     ".";
-}
-
-@media only screen and (max-width: 760px) {
-  #main { grid-template-columns: 100% 0%; }
 }
 
 #panel {
@@ -284,6 +279,30 @@ code {
 input:disabled {
   opacity: 0.8;
   color: #999 !important;
+}
+
+@media only screen and (max-width: 760px) {
+  #app {
+    overflow-x: hidden;
+  }
+  #main {
+    grid-template-columns: 100%;
+    grid-template-rows: 100%;
+    grid-template-areas:
+      "a";
+  }
+  #a {
+    padding-top: 0;
+    width: 100vw;
+  }
+  .demo {
+    max-width: 100vw;
+    height: calc(100% - 110px);
+  }
+  #input-box {
+    width: 100vw;
+    height: 80px;
+  }
 }
 
 </style>
