@@ -14,6 +14,15 @@ from pydantic import BaseModel
 from gpt3 import GPT3
 
 
+class Turn(BaseModel):
+    you: str = ''
+    muse: str = ''
+
+
+class Conversation(BaseModel):
+    conversation: List[Turn] = []
+
+
 app = FastAPI()
 origins = [
     "http://localhost",
@@ -32,14 +41,18 @@ app.add_middleware(
 andrew = GPT3()
 
 
-@app.get("/recommend")
-async def recommend(prompt: str):
+@app.post("/recommend")
+async def recommend(conversation: Conversation):
+    history = [f"You: {turn.you}\nMuse: {turn.muse}" for turn in conversation.conversation[:-1]]
+    history.append(f"You: {conversation.conversation[-1].you}\nMuse:")
+    print(history)
     with open("assets/preset_song.txt", 'r') as file:
         template = file.read()
     with open(f"assets/preset_song.json", 'r') as file:
         config = json.load(file)
+    print(template.format(conversation='\n\n'.join(history)))
     response = andrew.query(
-        template.format(prompt=prompt),
+        template.format(conversation='\n\n'.join(history)),
         stop=config['stop'],
         temperature=config['temperature'],
         max_tokens=config['maxTokens'],

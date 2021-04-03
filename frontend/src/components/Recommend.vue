@@ -1,37 +1,6 @@
 <template>
   <div>
-    <div id="sidebar" class="ui right sidebar vertical menu">
-      <div class="ui container fluid">
-        <div class="ui form">
-          <h3>Add Prompt</h3>
-          <div class="field">
-            <!-- <label>Prompt</label> -->
-            <!-- <input type="text" v-model="a"> -->
-            <textarea v-model="a" style="height: 30vh;" :class="{streaming: streaming}"></textarea>
-          </div>
-          <div class="error">
-            {{ this.errorMessage }}
-          </div>
-          <button class="ui green button" :class="{disabled: loading}" @click="query" :disabled="loading || streaming">Submit</button>
-          <div class="ui accordion">
-            <div class="title">
-              <i class="dropdown icon"></i>
-              Details
-            </div>
-            <div class="content">
-              <p>
-                Given a prompt, we get you out of a rut by recommending you something new and different!
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div id="main" class="pusher">
-    <div id="sidebarButton" class="ui big launch left attached fixed button">
-      <i class="content icon"></i>
-      <span class="text">Menu</span>
-    </div>
+    <div id="main">
     <div id="a" class="ui large form">
       <!-- <h3 class="ui dividing header">Demo</h3> -->
       <div class="demo">
@@ -55,7 +24,7 @@
               <div class="track-title">{{ track.song }}</div>
               <div class="track-artist">{{ track.artist }}</div>
             </div>
-            <a :href="track.songUrl">
+            <a :href="track.embedSrc"><!-- @click="playSong(track.songUrl)"> -->
             <svg class="play-button" width="30px" height="30px" viewBox="0 0 750 750" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
               <g transform="matrix(1,0,0,1,-55.3586,-63.2518)">
                 <g transform="matrix(1.26277,0,0,1.26277,-121.959,-115.246)">
@@ -68,8 +37,13 @@
             </svg>
             </a>
           </div>
-        </div>
+        </div>  
       </div>
+      <div id="input-box">
+        <!-- <iframe :src="embedSrc" width="100%" height="80" frameborder="0" allowtransparency="true" allow="encrypted-media"></iframe> -->
+        <input v-model="a" :class="{streaming: streaming}" v-on:keyup.enter="query"></input>
+      </div>
+      
     </div>
     </div>
   </div>
@@ -113,12 +87,12 @@ code {
   height: 100vh;
   text-align: left;
   display: grid;
-  grid-template-columns: 75% 25%;
+  grid-template-columns: 100%;
   grid-template-rows: 5vh auto 10vh;
   grid-template-areas:
-    ". panel"
-    "a panel"
-    ". panel";
+    "."
+    "a"
+    ".";
 }
 
 @media only screen and (max-width: 760px) {
@@ -200,7 +174,7 @@ code {
 }
 
 .demo {
-  height: 80vh;
+  height: 60vh;
   max-height: 650px;
   overflow-y: scroll;
   margin: auto;
@@ -211,7 +185,7 @@ code {
 }
 
 #demo-title {
-  font-family: 'Avenir';
+  font-family: 'Nunito Sans', sans-serif;;
   font-weight: 500;
   color: #EEE;
   padding-bottom: 5px;
@@ -241,16 +215,28 @@ code {
 }
 
 .track-title, .bot-prompt {
-  font-family: 'Avenir';
+  font-family: 'Nunito Sans', sans-serif;;
   color: #DDD;
   font-weight: bold;
   margin: 3px;
 }
 
+.bot-prompt {
+  width: 80%;
+  margin-left: 20%;
+  color: #23db59;
+}
+
 .track-artist, .top-prompt {
-  font-family: 'Avenir';
+  font-family: 'Nunito Sans', sans-serif;;
   color: #AAA;
   margin: 3px;
+}
+
+.top-prompt {
+  width: 80%;
+  color: #FFF;
+  font-weight: bold;
 }
 
 .play-button {
@@ -261,6 +247,17 @@ code {
 
 .play-button:hover {
   cursor: pointer;
+}
+
+#input-box {
+  /*border: 5px solid red;*/
+  /*height: 100px;*/
+  width: 390px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #222;
+  padding: 20px;
+  /*box-shadow: 2px 2px 5px 2px #888888;*/
 }
 
 </style>
@@ -318,28 +315,28 @@ export default {
       done: false,
       streaming: false,
       tracks:[{
-        promptA: `You have been listening to sad songs lately...`,
-        promptB: 'Try cheering up with this!',
-        song: 'Dear Theodosia',
-        artist: 'Leslie Odom Jr.',
-        albumArt: 'https://i.scdn.co/image/ab67616d0000b273d72fb5571087bca0a2fed008',
-        songUrl: 'https://open.spotify.com/album/1kCHru7uhxBUdzkm4gzRQc'
+        promptA: `Hey!`,
+        promptB: 'Heya! How are you doing today? Check out this lovely tune I heard the other day!',
+        promptBRaw: 'Heya! How are you doing today? Check out this lovely tune I heard the other day! <SONG>Anywhere With You Is Home by Kurt Hugo Schneider</SONG>',
+        song: 'Anywhere With You Is H...',
+        artist: 'Kurt Hugo Schneider',
+        albumArt: 'https://i.scdn.co/image/ab67616d0000b27322a8499fc093e0e2fc8c45c2',
+        songUrl: 'https://open.spotify.com/track/3QW9sihUUzSke7zlDJyCgA',
+        embedSrc: 'spotify:track:3QW9sihUUzSke7zlDJyCgA?play=true'
       }],
-      a: `You have been listening to sad songs lately...`,
+      a: `Got anything for me?`,
       b: 'Try cheering up with this!',
       server: '',
       // server: 'http://localhost:8000',
-      stop: '',
-      temperature: '0.3',
-      maxTokens: '500',
-      errorMessage: '',
       preset: 'none',
       isMobile: false,
       response: '',
-      albumArt: 'https://i.scdn.co/image/ab67616d0000b273d72fb5571087bca0a2fed008',
-      artist: 'Leslie Odom Jr.',
-      song: 'Dear, Theodosia',
-      nTries: 0
+      albumArt: 'https://i.scdn.co/image/ab67616d0000b27322a8499fc093e0e2fc8c45c2',
+      artist: 'Kurt Hugo Schneider',
+      song: 'Anywhere With You Is H...',
+      nTries: 0,
+      historyLength: 5,
+      embedSrc: 'spotify:track:3QW9sihUUzSke7zlDJyCgA?play=true'
     }
   },
   computed: {
@@ -349,12 +346,16 @@ export default {
   methods: {
     async getSong () {
       const path = this.server + '/recommend'
-      axios.get(path, {
-        params: {
-          prompt: this.a
+      let conversation = this.tracks.map(t => {
+        return {
+          you: t.promptA,
+          muse: t.promptBRaw
         }
       })
+      conversation.push({you: this.a, muse: ''})
+      axios.post(path, {conversation})
       .then(response => {
+        const rawResponse = response.data.choices[0].text
         this.b = response.data.choices[0].text.split('<SONG>')[0]
         const query = response.data.choices[0].text.split('<SONG>')[1].split('</SONG>')[0]
         console.log(query)
@@ -381,19 +382,24 @@ export default {
             if (!song) song = response.data.tracks.items[0]
             this.albumArt = song.album.images[0].url
             this.artist = song.artists[0].name
-            if (this.artist.length > 25) this.artist = this.artist.substr(0, 22) + '...'
+            if (this.artist.length >= 25) this.artist = this.artist.substr(0, 22) + '...'
             this.song = song.name
-            if (this.song.length > 25) this.song = this.song.substr(0, 22) + '...'
+            if (this.song.length >= 25) this.song = this.song.substr(0, 22) + '...'
             this.songUrl = song.external_urls.spotify
-            let newTracks = [{
+            this.embedSrc = 'spotify:track:' + this.songUrl.split('track/')[1] + '?play=true'
+            let newTracks = []
+            this.tracks.slice(-this.historyLength).forEach(t => newTracks.push(t))
+            newTracks.push({
               promptA: this.a,
               promptB: this.b,
+              promptBRaw: rawResponse,
               song: this.song,
               artist: this.artist,
               albumArt: this.albumArt,
-              songUrl: this.songUrl
-            }]
-            this.tracks.slice(0, 2).forEach(t => newTracks.push(t))
+              songUrl: this.songUrl,
+              embedSrc: this.embedSrc
+            })
+            // this.tracks.slice(0, 2).forEach(t => newTracks.push(t))
             this.tracks = newTracks
             this.loading = false
             this.done = true
@@ -406,6 +412,12 @@ export default {
       this.done = false
       this.nTries = 0
       this.getSong()
+    },
+    playSong (trackUrl) {
+      this.embedSrc = trackUrl.replace('track', 'embed/track') + ':play'
+      // console.log(document.getElementsByTagName('button'))
+      // setTimeout(function(){ document.querySelectorAll('[title="Play"]').click() }, 500);
+      
     }
   },
   created () {
