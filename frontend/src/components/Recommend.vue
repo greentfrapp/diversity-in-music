@@ -408,7 +408,7 @@ export default {
       nTries: 0,
       historyLength: 5,
       embedSrc: 'spotify:track:3QW9sihUUzSke7zlDJyCgA?play=true',
-      emojis: emoji.slice(0, 30).map(e => e.char)
+      emojis: emoji.map(e => e.char)
     }
   },
   computed: {
