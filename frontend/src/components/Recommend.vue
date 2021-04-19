@@ -18,7 +18,7 @@
               {{ track.promptB }}
             </div>
           </div>
-          <div class="track">
+          <div v-if="track.song" class="track">
             <img :src="track.albumArt" style="width: 60px; display: inline-block;" />
             <div class="track-info">
               <div class="track-title">{{ track.song }}</div>
@@ -401,60 +401,85 @@ export default {
       axios.post(path, {conversation})
       .then(response => {
         const rawResponse = response.data.choices[0].text
-        this.b = response.data.choices[0].text.split('<SONG>')[0]
-        const query = response.data.choices[0].text.split('<SONG>')[1].split('</SONG>')[0]
-        console.log(query)
-        const song = query.split('by')[0]
-        const artist = query.split(' by ')[1]
-        axios.get('https://api.spotify.com/v1/search', {
-          headers: {
-            Authorization: 'Bearer ' + this.accessToken
-          },
-          params: {
-            q: song,
-            type: 'track',
-            limit: 10,
-          }
-        })
-        .then(response => {
-          if (response.data.tracks.items.length === 0 && this.nTries < 3) {
-            this.nTries += 1
-            this.getSong()
-          } else {
-            let song = response.data.tracks.items.find(song => {
-              song.artists[0].name.includes(artist)
+        if (response.data.choices[0].text.includes('<SONG>')  && response.data.choices[0].text.includes('</SONG>')) {
+            this.b = response.data.choices[0].text.split('<SONG>')[0]
+            const query = response.data.choices[0].text.split('<SONG>')[1].split('</SONG>')[0]
+            console.log(query)
+            const song = query.split('by')[0]
+            const artist = query.split(' by ')[1]
+            axios.get('https://api.spotify.com/v1/search', {
+              headers: {
+                Authorization: 'Bearer ' + this.accessToken
+              },
+              params: {
+                q: song,
+                type: 'track',
+                limit: 10,
+              }
             })
-            if (!song) song = response.data.tracks.items[0]
-            this.albumArt = song.album.images[0].url
-            this.artist = song.artists[0].name
-            if (this.artist.length >= 22) this.artist = this.artist.substr(0, 18) + '...'
-            this.song = song.name
-            if (this.song.length >= 22) this.song = this.song.substr(0, 18) + '...'
-            this.songUrl = song.external_urls.spotify
-            this.embedSrc = 'spotify:track:' + this.songUrl.split('track/')[1] + '?play=true'
-            let newTracks = []
-            this.tracks.slice(-this.historyLength).forEach(t => newTracks.push(t))
-            newTracks.push({
-              promptA: this.a,
-              promptB: this.b,
-              promptBRaw: rawResponse,
-              song: this.song,
-              artist: this.artist,
-              albumArt: this.albumArt,
-              songUrl: this.songUrl,
-              embedSrc: this.embedSrc
-            })
-            // this.tracks.slice(0, 2).forEach(t => newTracks.push(t))
-            this.tracks = newTracks
-            this.loading = false
-            this.done = true
+            .then(response => {
+              if (response.data.tracks.items.length === 0 && this.nTries < 3) {
+                this.nTries += 1
+                this.getSong()
+              } else {
+                let song = response.data.tracks.items.find(song => {
+                  song.artists[0].name.includes(artist)
+                })
+                if (!song) song = response.data.tracks.items[0]
+                this.albumArt = song.album.images[0].url
+                this.artist = song.artists[0].name
+                if (this.artist.length >= 22) this.artist = this.artist.substr(0, 18) + '...'
+                this.song = song.name
+                if (this.song.length >= 22) this.song = this.song.substr(0, 18) + '...'
+                this.songUrl = song.external_urls.spotify
+                this.embedSrc = 'spotify:track:' + this.songUrl.split('track/')[1] + '?play=true'
+                let newTracks = []
+                this.tracks.slice(-this.historyLength).forEach(t => newTracks.push(t))
+                newTracks.push({
+                  promptA: this.a,
+                  promptB: this.b,
+                  promptBRaw: rawResponse,
+                  song: this.song,
+                  artist: this.artist,
+                  albumArt: this.albumArt,
+                  songUrl: this.songUrl,
+                  embedSrc: this.embedSrc
+                })
+                // this.tracks.slice(0, 2).forEach(t => newTracks.push(t))
+                this.tracks = newTracks
+                this.loading = false
+                this.done = true
 
-            setTimeout(function(){
-              const temp = document.getElementById("demoDiv")
-              temp.scrollTop = temp.scrollTopMax
-            }, 100)
-          }
-        })
+                setTimeout(function(){
+                  const temp = document.getElementById("demoDiv")
+                  temp.scrollTop = temp.scrollTopMax
+                }, 100)
+              }
+            })
+        } else {
+          this.b = response.data.choices[0].text
+          let newTracks = []
+          this.tracks.slice(-this.historyLength).forEach(t => newTracks.push(t))
+          newTracks.push({
+            promptA: this.a,
+            promptB: this.b,
+            promptBRaw: this.b,
+            song: null,
+            artist: null,
+            albumArt: null,
+            songUrl: null,
+            embedSrc: null
+          })
+          // this.tracks.slice(0, 2).forEach(t => newTracks.push(t))
+          this.tracks = newTracks
+          this.loading = false
+          this.done = true
+
+          setTimeout(function(){
+            const temp = document.getElementById("demoDiv")
+            temp.scrollTop = temp.scrollTopMax
+          }, 100)
+        }
       })
     },
     async query () {

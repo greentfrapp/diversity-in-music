@@ -57,6 +57,7 @@ async def recommend(conversation: Conversation):
         max_tokens=config['maxTokens'],
         stream=False
     )
+    response["choices"][0]["text"] = response["choices"][0]["text"].encode('utf-16', 'surrogatepass').decode('utf-16')
     print(response)
     return JSONResponse(response)
 
