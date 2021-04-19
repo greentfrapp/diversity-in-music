@@ -46,6 +46,11 @@
           <circle cx="225" cy="50" r="15" fill="#23db59" />
         </svg>
       </div>
+      <div id="emoji-box">
+        <button class="ui black button" v-for="e in emojis" @click="sendEmoji(e)">
+          {{ e }}
+        </button>
+      </div>
       <div id="input-box">
         <input v-model="a" :disabled="loading" v-on:keyup.enter="query"></input>
       </div>
@@ -276,6 +281,26 @@ code {
   /*box-shadow: 2px 2px 5px 2px #888888;*/
 }
 
+#emoji-box {
+  width: 390px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #222;
+  height: 50px;
+  text-align: center;
+  overflow-x: scroll;
+  display: flex;
+}
+
+#emoji-box button {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+#emoji-box button:hover {
+  cursor: pointer;
+}
+
 input:disabled {
   opacity: 0.8;
   color: #999 !important;
@@ -297,7 +322,7 @@ input:disabled {
   }
   .demo {
     max-width: 100vw;
-    height: calc(100% - 110px);
+    height: calc(100% - 160px);
   }
   #input-box {
     width: 100vw;
@@ -312,6 +337,7 @@ import axios from 'axios'
 // import $ from '../../static/jquery.min'
 import JSON5 from 'json5'
 import qs from 'qs'
+import emoji from 'emoji.json'
 export default {
   mounted () {
     this.isMobile = window.matchMedia('only screen and (max-width: 760px)').matches
@@ -381,7 +407,8 @@ export default {
       song: 'Anywhere With You Is H...',
       nTries: 0,
       historyLength: 5,
-      embedSrc: 'spotify:track:3QW9sihUUzSke7zlDJyCgA?play=true'
+      embedSrc: 'spotify:track:3QW9sihUUzSke7zlDJyCgA?play=true',
+      emojis: emoji.slice(0, 30).map(e => e.char)
     }
   },
   computed: {
@@ -389,6 +416,10 @@ export default {
   watch: {
   },
   methods: {
+    async sendEmoji (emoji) {
+      this.a = emoji
+      this.query()
+    },
     async getSong () {
       const path = this.server + '/recommend'
       let conversation = this.tracks.map(t => {
