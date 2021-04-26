@@ -3,7 +3,7 @@
     <div id="main">
     <div id="a" class="ui large form">
       <!-- <h3 class="ui dividing header">Demo</h3> -->
-      <div id="demoDiv" class="demo">
+      <div id="demoDiv" :class="{demo: true, short: showEmojis}">
         <div class="status-bar">
           <span style="color: white;">12:00</span>
           <img src="static/status-bar.svg" style="width: 20%; float: right;" />
@@ -46,10 +46,13 @@
           <circle cx="225" cy="50" r="15" fill="#23db59" />
         </svg>
       </div>
-      <div id="emoji-box">
+      <div id="emoji-box" v-if="showEmojis">
         <button class="ui black button" v-for="e in emojis" @click="sendEmoji(e)">
           {{ e }}
         </button>
+      </div>
+      <div id="emoji-toggle" @click="() => showEmojis = !showEmojis">
+        <div>{{ emojis[0] }}</div>
       </div>
       <div id="input-box">
         <input v-model="a" :disabled="loading" v-on:keyup.enter="query"></input>
@@ -191,6 +194,10 @@ code {
   box-shadow: 2px 2px 5px 2px #888888;
 }
 
+.demo.short {
+  height: calc(60vh - 150px);
+}
+
 #demo-title {
   font-family: 'Nunito Sans', sans-serif;;
   font-weight: 500;
@@ -286,10 +293,10 @@ code {
   margin-left: auto;
   margin-right: auto;
   background: #222;
-  height: 50px;
+  height: 150px;
   text-align: center;
-  overflow-x: scroll;
-  display: flex;
+  overflow-y: scroll;
+  //display: flex;
 }
 
 #emoji-box button {
@@ -304,6 +311,22 @@ code {
 input:disabled {
   opacity: 0.8;
   color: #999 !important;
+}
+
+#emoji-toggle {
+  width: 390px;
+  margin-left: auto;
+  margin-right: auto;
+  background: #222;
+  height: 20px;
+  text-align: center;
+  display: flex;
+  cursor: pointer;
+}
+
+#emoji-toggle div {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 @media only screen and (max-width: 760px) {
@@ -408,7 +431,8 @@ export default {
       nTries: 0,
       historyLength: 5,
       embedSrc: 'spotify:track:3QW9sihUUzSke7zlDJyCgA?play=true',
-      emojis: emoji.map(e => e.char)
+      emojis: emoji.map(e => e.char),
+      showEmojis: false,
     }
   },
   computed: {
