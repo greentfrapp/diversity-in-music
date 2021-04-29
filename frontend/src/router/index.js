@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 const routerOptions = [
   { path: '/', component: 'Recommend' },
+  { path: '/emoji', component: 'Emoji' },
   { path: '*', component: 'NotFound' }
 ]
 const routes = routerOptions.map(route => {

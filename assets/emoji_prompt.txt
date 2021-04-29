@@ -1,0 +1,33 @@
+For a given emoji, we provide a list of 10 appropriate songs.
+
+---
+
+🕺 
+1. Dancing Queen by ABBA
+2. Uptown Funk by Bruno Mars
+3. Shake It Off by Taylor Swift
+4. We Found Love by Rihanna
+5. Baby Got Back by Sir Mix-a-lot
+6. Let's Groove by Earth, Wind & Fire
+7. Havana by Camila Cabello ft Young Thug
+8. Watch Me (Whip/Nae Nae) by Silentó
+9. I Like To Move It by Reel 2 Real (The Move)
+10. Funkytown by Lipps Inc
+
+---
+
+💎
+1. Diamonds by Rihanna
+2. Gold by A Cherry on Top
+3. Can't Buy Me Love by The Beatles
+4. Gold Digger by Kanye West and Jamie Foxx
+5. Gold by Kiiara
+6. Titanium by David Guetta ft Sia
+7. Hotline Bling by Drake
+8. Gold Rush by Kanye West ft Chris Martin
+9. Gold on the Ceiling by The Black Keys
+10. Sarah by Allie X ft KOPPS
+
+---
+
+{emoji}

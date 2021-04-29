@@ -62,4 +62,29 @@ async def recommend(conversation: Conversation):
     return JSONResponse(response)
 
 
+@app.post("/recommendemoji/{emoji}")
+async def recommendemoji(emoji):
+    with open("assets/emoji_prompt.txt", 'r') as file:
+        template = file.read()
+    with open(f"assets/emoji_prompt.json", 'r') as file:
+        config = json.load(file)
+    response = andrew.query(
+        template.format(emoji=emoji),
+        stop=config['stop'],
+        temperature=config['temperature'],
+        max_tokens=config['maxTokens'],
+        stream=False
+    )
+    response["choices"][0]["text"] = response["choices"][0]["text"].encode('utf-16', 'surrogatepass').decode('utf-16')
+    print(response)
+    songs = [s.split('. ')[1] for s in response["choices"][0]["text"].strip().split('\n') if '. ' in s]
+    songs = [{'song': s.split(' by ')[0], 'artist': s.split(' by ')[1]} for s in songs if 'by' in s]
+    return JSONResponse({'songs': songs})
+
+
+@app.get("/emoji")
+def home():
+    return HTMLResponse(pkg_resources.resource_string(__name__, 'dist/index.html'))
+
+
 app.mount("/", StaticFiles(directory="dist", html=True), name="dist")
